@@ -39,7 +39,7 @@ function fetchAuthor(post) {
       const postsContainer = document.getElementById('posts');
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td>${post.title}</td>
+        <td><a href="post.html?id=${post.id}">${post.title}</a></td>
         <td>${truncateDescription(post.body)}</td>
         <td>${post.body.split(' ').length}</td>
         <td>${user.name}</td>

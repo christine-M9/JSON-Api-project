@@ -60,4 +60,62 @@ body {
     background-color: #ddd;
     cursor: not-allowed;
   }
-  
+ 
+/* Comments section styles */
+.comment-container {
+    max-width: 600px; /* Limit the width */
+    margin: 20px auto; /* Center it */
+    padding: 20px; /* Padding around content */
+    background-color: #ffffff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+/* Individual Comment styles */
+.comment {
+    border: 1px solid #ddd; /* Border for individual comments */
+    padding: 15px; /* Padding for comments */
+    margin-bottom: 15px; /* Space between comments */
+    border-radius: 5px; /* Rounded corners for comments */
+    background-color: #f9f9f9; /* Light gray background */
+    transition: box-shadow 0.3s; /* Smooth shadow effect */
+}
+
+/* Hover effect for comments */
+.comment:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Shadow on hover */
+}
+
+/* Author name styles */
+.comment strong {
+    display: block; /* Ensures the author's name is on a new line */
+    margin-bottom: 8px; /* Space below the name */
+    color: #2c3e50; /* Darker color for names */
+    font-size: 1.1em; /* Slightly larger font size */
+}
+
+/* Comment text styles */
+.comment p {
+    margin: 0; /* Removes default margin */
+    line-height: 1.4; /* Improves readability */
+    color: #666; /* Softer text color */
+    max-height: 45px; /* Limit height for descriptions */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Ellipsis for overflowed text */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Read More link styles */
+.read-more {
+    color: #3498db; /* Color for the read more link */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 0.9em; /* Slightly smaller font size */
+}
+
+/* Back link styles */
+.back-link {
+    display: block; /* Block display to take full width */
+    text-align: center; /* Centered text */
+    margin-top: 20px; /* Space above */
+    color: #3498db; /* Link color */
+}
