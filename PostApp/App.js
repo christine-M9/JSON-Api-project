@@ -13,7 +13,7 @@ function fetchPosts() {
     .catch((error) => console.error("Error fetching posts:", error));
 }
 
-// specific page of posts
+// Display posts for a specific page
 function displayPage(page) {
   const start = (page - 1) * postsPerPage;
   const end = start + postsPerPage;
@@ -22,7 +22,6 @@ function displayPage(page) {
   const postsContainer = document.getElementById("posts");
   postsContainer.innerHTML = "";
 
-  // Display each post in the current page range
   postsToDisplay.forEach((post) => {
     fetchAuthor(post);
   });
@@ -31,15 +30,15 @@ function displayPage(page) {
   updatePaginationControls();
 }
 
-// fetch author details and add a row to the table
+// Fetch author details and add a row to the table
 function fetchAuthor(post) {
   fetch(`https://jsonplaceholder.typicode.com/users/${post.userId}`)
     .then((response) => response.json())
     .then((user) => {
       const postsContainer = document.getElementById("posts");
 
-      // Create row for post details
       const row = document.createElement("tr");
+      row.id = `post-row-${post.id}`;  // Set unique ID for each row
       row.innerHTML = `
         <td><a href="post.html?id=${post.id}">${post.title}</a></td>
         <td>${truncateDescription(post.body)}</td>
@@ -49,13 +48,7 @@ function fetchAuthor(post) {
           <div class="action-container">
             <button class="action-button" onclick="toggleOptions(this)">...</button>
             <div class="options" style="display:none;">
-              <button onclick="editPost(this, ${post.id}, '${post.title.replace(
-        /'/g,
-        "\\'"
-      )}', '${post.body.replace(/'/g, "\\'")}', '${user.name.replace(
-        /'/g,
-        "\\'"
-      )}')">Edit</button>
+              <button onclick="editPost(this, ${post.id}, \`${post.title}\`, \`${post.body}\`, \`${user.name}\`)">Edit</button>
               <button onclick="deletePost(${post.id})">Delete</button>
             </div>
           </div>
@@ -66,7 +59,7 @@ function fetchAuthor(post) {
     .catch((error) => console.error("Error fetching author:", error));
 }
 
-// truncate description to 100 characters
+// Truncate description to 100 characters
 function truncateDescription(description) {
   const maxLength = 100;
   return description.length > maxLength
@@ -74,7 +67,7 @@ function truncateDescription(description) {
     : description;
 }
 
-// update pagination controls
+// Update pagination controls
 function updatePaginationControls() {
   const pageControls = document.getElementById("pageControls");
   pageControls.innerHTML = "";
@@ -118,31 +111,43 @@ function updatePaginationControls() {
   pageControls.appendChild(nextButton);
 }
 
-// edit action
+// Edit post with inline editing
 function editPost(button, id, currentTitle, currentBody, currentAuthor) {
-  // Prompt user for new details
-  const newTitle = prompt("Edit Title:", currentTitle);
-  const newBody = prompt("Edit Description:", currentBody);
+  const row = document.getElementById(`post-row-${id}`);
 
-  // Find the row of the post being edited
-  const row = button.closest("tr");
+  row.innerHTML = `
+    <td><input type="text" value="${currentTitle}" id="edit-title-${id}" /></td>
+    <td><textarea id="edit-body-${id}">${currentBody}</textarea></td>
+    <td><input type="number" value="${currentBody.split(" ").length}" id="edit-words-${id}" disabled /></td>
+    <td><input type="text" value="${currentAuthor}" id="edit-author-${id}" /></td>
+    <td>
+      <div class="action-container">
+        <button onclick="saveEdit(${id})">Save</button>
+        <button onclick="cancelEdit(${id}, \`${currentTitle}\`, \`${currentBody}\`, \`${currentAuthor}\`)">Cancel</button>
+      </div>
+    </td>
+  `;
+}
 
-  // Calling the update function
-  updatePost(id, newTitle || currentTitle, newBody || currentBody)
+// Save action to apply changes
+function saveEdit(id) {
+  const newTitle = document.getElementById(`edit-title-${id}`).value;
+  const newBody = document.getElementById(`edit-body-${id}`).value;
+  const newAuthor = document.getElementById(`edit-author-${id}`).value;
+
+  updatePost(id, newTitle, newBody)
     .then(() => {
-      // Update the row's content
+      const row = document.getElementById(`post-row-${id}`);
       row.innerHTML = `
-        <td><a href="post.html?id=${id}">${newTitle || currentTitle}</a></td>
-        <td>${truncateDescription(newBody || currentBody)}</td>
-        <td>${(newBody || currentBody).split(" ").length}</td>
-        <td>${currentAuthor}</td>
+        <td><a href="post.html?id=${id}">${newTitle}</a></td>
+        <td>${truncateDescription(newBody)}</td>
+        <td>${newBody.split(" ").length}</td>
+        <td>${newAuthor}</td>
         <td>
           <div class="action-container">
             <button class="action-button" onclick="toggleOptions(this)">...</button>
             <div class="options" style="display:none;">
-              <button onclick="editPost(this, ${id}, '${
-        newTitle || currentTitle
-      }', '${newBody || currentBody}', '${currentAuthor}')">Edit</button>
+              <button onclick="editPost(this, ${id}, \`${newTitle}\`, \`${newBody}\`, \`${newAuthor}\`)">Edit</button>
               <button onclick="deletePost(${id})">Delete</button>
             </div>
           </div>
@@ -152,7 +157,28 @@ function editPost(button, id, currentTitle, currentBody, currentAuthor) {
     .catch((error) => console.error("Error updating post:", error));
 }
 
-// Function to update a post using PATCH / PUT
+// Cancel action to revert changes
+function cancelEdit(id, originalTitle, originalBody, originalAuthor) {
+  const row = document.getElementById(`post-row-${id}`);
+
+  row.innerHTML = `
+    <td><a href="post.html?id=${id}">${originalTitle}</a></td>
+    <td>${truncateDescription(originalBody)}</td>
+    <td>${originalBody.split(" ").length}</td>
+    <td>${originalAuthor}</td>
+    <td>
+      <div class="action-container">
+        <button class="action-button" onclick="toggleOptions(this)">...</button>
+        <div class="options" style="display:none;">
+          <button onclick="editPost(this, ${id}, \`${originalTitle}\`, \`${originalBody}\`, \`${originalAuthor}\`)">Edit</button>
+          <button onclick="deletePost(${id})">Delete</button>
+        </div>
+      </div>
+    </td>
+  `;
+}
+
+// Update a post using PATCH
 function updatePost(id, title, body) {
   return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
     method: "PATCH",
@@ -163,7 +189,7 @@ function updatePost(id, title, body) {
       id: id,
       title: title,
       body: body,
-      userId: 1, // Assuming userId is 1 for this mock API
+      userId: 1,
     }),
   })
     .then((response) => {
@@ -177,38 +203,11 @@ function updatePost(id, title, body) {
     });
 }
 
-// delete action
-function deletePost(id) {
-  if (confirm(`Are you sure you want to delete post ${id}?`)) {
-    // Logic for removing the post from the DOM
-    const postsContainer = document.getElementById("posts");
-    const postRow = [...postsContainer.getElementsByTagName("tr")].find(
-      (row) => {
-        return row.querySelector("a").href.includes(`post.html?id=${id}`);
-      }
-    );
-    postsContainer.removeChild(postRow);
-
-    // Mock delete function
-    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        console.log(`Post ${id} deleted.`);
-      })
-      .catch((error) => console.error("Error deleting post:", error));
-  }
-}
-
-// Function to toggle the visibility of options
+// Toggle visibility of options
 function toggleOptions(button) {
-  const optionsDiv = button.nextElementSibling;
-  optionsDiv.style.display =
-    optionsDiv.style.display === "none" ? "block" : "none";
+  const options = button.nextElementSibling;
+  options.style.display = options.style.display === "none" ? "block" : "none";
 }
 
-// Initial fetch of posts on page load
+// Initial fetch to populate posts
 fetchPosts();
