@@ -22,7 +22,7 @@ function fetchComments() {
         .then(response => response.json())
         .then(comments => {
             const commentsContainer = document.getElementById('comments');
-            commentsContainer.innerHTML = ''; // Clear previous comments
+            commentsContainer.innerHTML = '';
 
             comments.forEach(comment => {
                 const commentDiv = document.createElement('div');

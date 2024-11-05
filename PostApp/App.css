@@ -30,7 +30,7 @@ body {
   td {
     background-color: #fff;
     color: #666;
-    max-width: 250px; /* Limit width for description cells */
+    max-width: 250px; 
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -63,60 +63,60 @@ body {
  
 /* Comments section styles */
 .comment-container {
-    max-width: 600px; /* Limit the width */
-    margin: 20px auto; /* Center it */
-    padding: 20px; /* Padding around content */
-    background-color: #ffffff; /* White background */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    max-width: 600px; 
+    margin: 20px auto; 
+    padding: 20px; 
+    background-color: #ffffff; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
 }
 
 /* Individual Comment styles */
 .comment {
-    border: 1px solid #ddd; /* Border for individual comments */
-    padding: 15px; /* Padding for comments */
-    margin-bottom: 15px; /* Space between comments */
-    border-radius: 5px; /* Rounded corners for comments */
-    background-color: #f9f9f9; /* Light gray background */
-    transition: box-shadow 0.3s; /* Smooth shadow effect */
+    border: 1px solid #ddd; 
+    padding: 15px; 
+    margin-bottom: 15px; 
+    border-radius: 5px; 
+    background-color: #f9f9f9; 
+    transition: box-shadow 0.3s; 
 }
 
 /* Hover effect for comments */
 .comment:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Shadow on hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Author name styles */
 .comment strong {
-    display: block; /* Ensures the author's name is on a new line */
-    margin-bottom: 8px; /* Space below the name */
-    color: #2c3e50; /* Darker color for names */
-    font-size: 1.1em; /* Slightly larger font size */
+    display: block; 
+    margin-bottom: 8px; 
+    color: #2c3e50; 
+    font-size: 1.1em; 
 }
 
 /* Comment text styles */
 .comment p {
-    margin: 0; /* Removes default margin */
-    line-height: 1.4; /* Improves readability */
-    color: #666; /* Softer text color */
-    max-height: 45px; /* Limit height for descriptions */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Ellipsis for overflowed text */
-    white-space: nowrap; /* Prevent text wrapping */
+    margin: 0; 
+    line-height: 1.4; 
+    color: #666; 
+    max-height: 45px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
 }
 
 /* Read More link styles */
 .read-more {
-    color: #3498db; /* Color for the read more link */
-    cursor: pointer; /* Pointer cursor */
-    font-size: 0.9em; /* Slightly smaller font size */
+    color: #3498db; 
+    cursor: pointer; 
+    font-size: 0.9em; 
 }
 
 /* Back link styles */
 .back-link {
-    display: block; /* Block display to take full width */
-    text-align: center; /* Centered text */
-    margin-top: 20px; /* Space above */
-    color: #3498db; /* Link color */
+    display: block; 
+    text-align: center; 
+    margin-top: 20px;
+    color: #3498db; /
 }
 
