@@ -26,7 +26,6 @@ function displayPage(page) {
     fetchAuthor(post);
   });
 
-  // Update pagination controls
   updatePaginationControls();
 }
 
@@ -38,7 +37,7 @@ function fetchAuthor(post) {
       const postsContainer = document.getElementById("posts");
 
       const row = document.createElement("tr");
-      row.id = `post-row-${post.id}`;  // Set unique ID for each row
+      row.id = `post-row-${post.id}`;
       row.innerHTML = `
         <td><a href="post.html?id=${post.id}">${post.title}</a></td>
         <td>${truncateDescription(post.body)}</td>
@@ -48,7 +47,9 @@ function fetchAuthor(post) {
           <div class="action-container">
             <button class="action-button" onclick="toggleOptions(this)">...</button>
             <div class="options" style="display:none;">
-              <button onclick="editPost(this, ${post.id}, \`${post.title}\`, \`${post.body}\`, \`${user.name}\`)">Edit</button>
+              <button onclick="editPost(this, ${post.id}, \`${
+        post.title
+      }\`, \`${post.body}\`, \`${user.name}\`)">Edit</button>
               <button onclick="deletePost(${post.id})">Delete</button>
             </div>
           </div>
@@ -74,7 +75,6 @@ function updatePaginationControls() {
 
   const totalPages = Math.ceil(allPosts.length / postsPerPage);
 
-  // Prev button
   const prevButton = document.createElement("button");
   prevButton.textContent = "Prev";
   prevButton.disabled = currentPage === 1;
@@ -86,7 +86,6 @@ function updatePaginationControls() {
   });
   pageControls.appendChild(prevButton);
 
-  // Page number buttons
   for (let i = 1; i <= totalPages; i++) {
     const pageButton = document.createElement("button");
     pageButton.textContent = i;
@@ -98,7 +97,6 @@ function updatePaginationControls() {
     pageControls.appendChild(pageButton);
   }
 
-  // Next button
   const nextButton = document.createElement("button");
   nextButton.textContent = "Next";
   nextButton.disabled = currentPage === totalPages;
@@ -111,103 +109,61 @@ function updatePaginationControls() {
   pageControls.appendChild(nextButton);
 }
 
-// Edit post with inline editing
-function editPost(button, id, currentTitle, currentBody, currentAuthor) {
-  const row = document.getElementById(`post-row-${id}`);
-
-  row.innerHTML = `
-    <td><input type="text" value="${currentTitle}" id="edit-title-${id}" /></td>
-    <td><textarea id="edit-body-${id}">${currentBody}</textarea></td>
-    <td><input type="number" value="${currentBody.split(" ").length}" id="edit-words-${id}" disabled /></td>
-    <td><input type="text" value="${currentAuthor}" id="edit-author-${id}" /></td>
-    <td>
-      <div class="action-container">
-        <button onclick="saveEdit(${id})">Save</button>
-        <button onclick="cancelEdit(${id}, \`${currentTitle}\`, \`${currentBody}\`, \`${currentAuthor}\`)">Cancel</button>
-      </div>
-    </td>
-  `;
+// Toggle display of the add post form
+function togglePostForm() {
+  const formContainer = document.getElementById("postFormContainer");
+  formContainer.style.display =
+    formContainer.style.display === "none" ? "block" : "none";
 }
 
-// Save action to apply changes
-function saveEdit(id) {
-  const newTitle = document.getElementById(`edit-title-${id}`).value;
-  const newBody = document.getElementById(`edit-body-${id}`).value;
-  const newAuthor = document.getElementById(`edit-author-${id}`).value;
-
-  updatePost(id, newTitle, newBody)
-    .then(() => {
-      const row = document.getElementById(`post-row-${id}`);
-      row.innerHTML = `
-        <td><a href="post.html?id=${id}">${newTitle}</a></td>
-        <td>${truncateDescription(newBody)}</td>
-        <td>${newBody.split(" ").length}</td>
-        <td>${newAuthor}</td>
-        <td>
-          <div class="action-container">
-            <button class="action-button" onclick="toggleOptions(this)">...</button>
-            <div class="options" style="display:none;">
-              <button onclick="editPost(this, ${id}, \`${newTitle}\`, \`${newBody}\`, \`${newAuthor}\`)">Edit</button>
-              <button onclick="deletePost(${id})">Delete</button>
-            </div>
-          </div>
-        </td>
-      `;
-    })
-    .catch((error) => console.error("Error updating post:", error));
+// Update word count in the form
+function updateWordCount() {
+  const body = document.getElementById("postBody").value;
+  const wordCount = body
+    .split(" ")
+    .filter((word) => word.trim().length > 0).length;
+  document.getElementById("postWords").value = wordCount;
 }
 
-// Cancel action to revert changes
-function cancelEdit(id, originalTitle, originalBody, originalAuthor) {
-  const row = document.getElementById(`post-row-${id}`);
+// Add a new post with dynamic author lookup
+function addPost() {
+  const title = document.getElementById("postTitle").value;
+  const body = document.getElementById("postBody").value;
+  const authorName = document.getElementById("postAuthor").value;
+  const wordCount = body
+    .split(" ")
+    .filter((word) => word.trim().length > 0).length;
 
-  row.innerHTML = `
-    <td><a href="post.html?id=${id}">${originalTitle}</a></td>
-    <td>${truncateDescription(originalBody)}</td>
-    <td>${originalBody.split(" ").length}</td>
-    <td>${originalAuthor}</td>
-    <td>
-      <div class="action-container">
-        <button class="action-button" onclick="toggleOptions(this)">...</button>
-        <div class="options" style="display:none;">
-          <button onclick="editPost(this, ${id}, \`${originalTitle}\`, \`${originalBody}\`, \`${originalAuthor}\`)">Edit</button>
-          <button onclick="deletePost(${id})">Delete</button>
-        </div>
-      </div>
-    </td>
-  `;
-}
+  // Find the user ID based on the entered author name
+  fetch(`https://jsonplaceholder.typicode.com/users`)
+    .then((response) => response.json())
+    .then((users) => {
+      const user = users.find(
+        (u) => u.name.toLowerCase() === authorName.toLowerCase()
+      );
 
-// Update a post using PATCH
-function updatePost(id, title, body) {
-  return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: id,
-      title: title,
-      body: body,
-      userId: 1,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      if (!user) {
+        alert("Author not found. Please enter a valid author name.");
+        return;
       }
-      return response.json();
+
+      const newPost = {
+        id: allPosts.length + 1,
+        title,
+        body,
+        userId: user.id,
+        author: user.name,
+        wordCount,
+      };
+
+      allPosts.unshift(newPost);
+      displayPage(currentPage);
+
+      document.getElementById("postForm").reset();
+      togglePostForm();
     })
-    .then((data) => {
-      console.log("Post updated:", data);
-    });
+    .catch((error) => console.error("Error fetching user data:", error));
 }
 
-// Toggle visibility of options
-function toggleOptions(button) {
-  const options = button.nextElementSibling;
-  options.style.display = options.style.display === "none" ? "block" : "none";
-}
-
-// Initial fetch to populate posts
+// Initialize fetching posts
 fetchPosts();

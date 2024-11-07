@@ -1,36 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post Viewer</title>
-  <link rel="stylesheet" href="App.css">
-</head>
-<body>
-  <h1>JSON PLACEHOLDER</h1>
-  
-  <!-- Table for displaying posts -->
-  <table id="postsTable">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Words</th>
-        <th>Author</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="posts">
-    </tbody>
-  </table>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post Viewer</title>
+    <link rel="stylesheet" href="App.css" />
+  </head>
+  <body>
+    <h1>JSON PLACEHOLDER</h1>
 
-  <!-- Pagination controls -->
-  <div class="pagination">
-    <span id="rowsPerPage">Show 10 rows</span>
-    <div id="pageControls" class="page-controls">
+    <!-- Table for displaying posts -->
+    <table id="postsTable">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Words</th>
+          <th>Author</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="posts"></tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+      <span id="rowsPerPage">Show 10 rows</span>
+      <div id="pageControls" class="page-controls"></div>
     </div>
-  </div>
 
-  <script src="App.js"></script>
-</body>
+    <!-- Add Post Button and Form -->
+    <button id="addPostButton" onclick="togglePostForm()">Add Post</button>
+    <div id="postFormContainer" style="display: none">
+      <h2>Add New Post</h2>
+      <form id="postForm">
+        <label for="postTitle">Title:</label>
+        <input type="text" id="postTitle" required />
+
+        <label for="postBody">Body:</label>
+        <textarea id="postBody" required oninput="updateWordCount()"></textarea>
+
+        <label for="postAuthor">Author:</label>
+        <input type="text" id="postAuthor" required />
+
+        <button type="button" onclick="addPost()">Add Post</button>
+      </form>
+    </div>
+
+    <script src="App.js"></script>
+  </body>
 </html>
